@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Durham CCC — Fixtures Grid</title>
+<title>Durham CCC â€” Fixtures Grid</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
@@ -398,7 +398,7 @@ textarea::placeholder{color:var(--text3);}
       <div class="detail-opp" id="detail-opp"></div>
       <div class="detail-sub" id="detail-sub"></div>
     </div>
-    <button class="btn-close" onclick="closeDetail()">×</button>
+    <button class="btn-close" onclick="closeDetail()">Ã—</button>
   </div>
   <div class="detail-tabs" id="detail-tabs"></div>
   <div class="detail-body" id="detail-body"></div>
@@ -437,13 +437,13 @@ textarea::placeholder{color:var(--text3);}
 <script>
 // ---- DATA ----
 const NOTE_FIELDS = [
-  {key:'preview',   label:'Match Preview / Verdict',  placeholder:'Overall read on the match, key storylines, what to expect…'},
-  {key:'selection', label:'Selection Thoughts',       placeholder:'XI considerations, who comes in, who sits out, balance of side…'},
-  {key:'tactics',   label:'Tactical Notes',           placeholder:'Field settings, bowling plans, matchups to exploit, batting approach…'},
-  {key:'conditions',label:'Conditions (Pitch / Weather)', placeholder:'Pitch character, forecast, expected behaviour, toss implications…'},
+  {key:'preview',   label:'Match Preview / Verdict',  placeholder:'Overall read on the match, key storylines, what to expectâ€¦'},
+  {key:'selection', label:'Selection Thoughts',       placeholder:'XI considerations, who comes in, who sits out, balance of sideâ€¦'},
+  {key:'tactics',   label:'Tactical Notes',           placeholder:'Field settings, bowling plans, matchups to exploit, batting approachâ€¦'},
+  {key:'conditions',label:'Conditions (Pitch / Weather)', placeholder:'Pitch character, forecast, expected behaviour, toss implicationsâ€¦'},
 ];
 
-// Rating buckets — used for colour coding on phase / matchup strips
+// Rating buckets â€” used for colour coding on phase / matchup strips
 // 'pos' = good for them (problem for us), 'neg' = bad for them (target), 'neu' = neutral, 'na' = no data
 const RATING_META = {
   pos: {color:'var(--red)',  label:'Strength'},
@@ -452,106 +452,106 @@ const RATING_META = {
   na:  {color:'var(--text3)',label:'No data'},
 };
 
-// Yorkshire scouting dossier — derived from the PDF
+// Yorkshire scouting dossier â€” derived from the PDF
 const YORKSHIRE_2025 = {
-  source:'2025 T20 Blast squad analysis · all T20 cricket since 2021',
+  source:'2025 T20 Blast squad analysis Â· all T20 cricket since 2021',
   batters:[
     {name:'Jonny Bairstow', role:'Top-order bat', threat:'high',
-      phases:{pp:{r:'pos',t:'Above avg · low dismissal'}, mid:{r:'pos',t:'Above avg · low dismissal'}, death:{r:'pos',t:'Well above avg · low dismissal'}},
-      matchups:{seam:{r:'pos',t:'Strength — hard to dismiss'}, spin:{r:'neu',t:'Slight dismissal risk — manageable'}},
-      summary:'Above-avg scoring across all three phases with low dismissal. Death is a major strength. Very hard to dismiss against seam. Slight elevation in dismissal risk vs spin, particularly balls turning away. Off-spin contains him.',
-      target:'Off-spin contains him best; balls spinning away offer the best dismissal chance. Save spin options for earlier phases — avoid spin at the death given his death-hitting strength.'
+      phases:{pp:{r:'pos',t:'Above avg Â· low dismissal rate'}, mid:{r:'pos',t:'Above avg Â· low dismissal rate'}, death:{r:'pos',t:'Well above avg Â· low dismissal rate'}},
+      matchups:{seam:{r:'pos',t:'Strength â€” low dismissal rate'}, spin:{r:'neu',t:'Slightly higher dismissal rate â€” manageable'}},
+      summary:'Above-avg scoring rate across all three phases with a low dismissal rate throughout. Death is a major strength. Very low dismissal rate against seam. Slightly higher dismissal rate against spin, particularly balls turning away. Off-spin contains him.',
+      target:'Off-spin contains him best; balls spinning away have the highest dismissal rate. Use spin in earlier phases â€” avoid spin at the death given his death-hitting strength.'
     },
     {name:'Adam Lyth', role:'Top-order bat', threat:'med',
-      phases:{pp:{r:'pos',t:'Above avg · slightly high dismissal'}, mid:{r:'pos',t:'Above avg · high dismissal'}, death:{r:'neu',t:'Avg · very high dismissal'}},
-      matchups:{seam:{r:'pos',t:'Strength — high scoring rate'}, spin:{r:'neg',t:'Weakness — low scoring, reduced boundary threat'}},
-      summary:'Above-avg scoring PP and middle, but elevated dismissal throughout. Spin is a clear weakness — below-avg scoring with reduced boundaries and higher dismissal risk.',
-      target:'Finger spin is the primary targeting angle. Balls spinning into him hardest to score off; balls spinning away carry dismissal risk.'
+      phases:{pp:{r:'pos',t:'Above avg Â· slightly high dismissal rate'}, mid:{r:'pos',t:'Above avg Â· high dismissal rate'}, death:{r:'neu',t:'Avg Â· very high dismissal rate'}},
+      matchups:{seam:{r:'pos',t:'Strength â€” high scoring rate'}, spin:{r:'neg',t:'Weakness â€” low scoring rate, reduced boundary rate'}},
+      summary:'Above-avg scoring rate in PP and middle, with an elevated dismissal rate throughout. Spin is a clear weakness â€” below-avg scoring rate with a reduced boundary rate and a higher dismissal rate.',
+      target:'Finger spin is the primary targeting angle. Balls spinning into him have the lowest scoring rate; balls spinning away have a higher dismissal rate.'
     },
     {name:'William Luxton', role:'Top-order bat', threat:'med',
-      phases:{pp:{r:'pos',t:'Above avg · high dismissal'}, mid:{r:'pos',t:'Above avg · avg dismissal'}, death:{r:'pos',t:'Above avg · low dismissal'}},
-      matchups:{seam:{r:'neu',t:'Slightly higher dismissal risk'}, spin:{r:'neu',t:'Slightly lower dismissal · fewer boundaries'}},
-      summary:'Above-avg scoring PP and middle. PP scoring comes at elevated risk. No dominant spin/seam preference.',
-      target:'Away-spinning deliveries the clearest dismissal threat against spin, with reduced boundary rate against them.'
+      phases:{pp:{r:'pos',t:'Above avg Â· high dismissal rate'}, mid:{r:'pos',t:'Above avg Â· avg dismissal rate'}, death:{r:'pos',t:'Above avg Â· low dismissal rate'}},
+      matchups:{seam:{r:'neu',t:'Slightly higher dismissal rate'}, spin:{r:'neu',t:'Slightly lower dismissal rate Â· fewer boundaries'}},
+      summary:'Above-avg scoring rate in PP and middle. PP scoring comes with a high dismissal rate. No dominant spin/seam preference.',
+      target:'Away-spinning deliveries have a higher dismissal rate and a reduced boundary rate against him.'
     },
     {name:'James Wharton', role:'Middle-order bat', threat:'med',
-      phases:{pp:{r:'pos',t:'Above avg · avg dismissal'}, mid:{r:'neu',t:'Average · avg dismissal'}, death:{r:'pos',t:'Above avg · avg dismissal'}},
-      matchups:{seam:{r:'pos',t:'Strength — good scoring and boundary rate'}, spin:{r:'neg',t:'Weakness — low boundary threat'}},
-      summary:'Reliable across phases with well-managed dismissal rates. Spin is a clear targeting angle — reduced scoring, lower boundary threat, higher dismissal risk.',
-      target:'Left-arm finger spin is most restrictive. Balls turning into him (off-spin to right-hander) actually his stronger spin type.'
+      phases:{pp:{r:'pos',t:'Above avg Â· avg dismissal rate'}, mid:{r:'neu',t:'Average Â· avg dismissal rate'}, death:{r:'pos',t:'Above avg Â· avg dismissal rate'}},
+      matchups:{seam:{r:'pos',t:'Strength â€” good scoring and boundary rate'}, spin:{r:'neg',t:'Weakness â€” low boundary rate'}},
+      summary:'Reliable across phases with well-managed dismissal rates. Spin is a clear targeting angle â€” reduced scoring rate, lower boundary rate, higher dismissal rate.',
+      target:'Left-arm finger spin is most restrictive. Balls turning into him (off-spin to a right-hander) are actually his stronger spin type.'
     },
-    {name:'Moeen Ali', role:'Allrounder — batting', threat:'med',
-      phases:{pp:{r:'neg',t:'Well below avg · avg dismissal'}, mid:{r:'neu',t:'Average · avg dismissal'}, death:{r:'pos',t:'Above avg · avg dismissal'}},
-      matchups:{seam:{r:'neu',t:'Hard to dismiss · fewer boundaries'}, spin:{r:'pos',t:'Strength — high boundary rate'}},
-      summary:'Well below-avg PP scoring, avg in middle. Death is where he adds clear value. Spin is a genuine strength for him — high boundary rate, particularly balls turning in to a left-hander.',
-      target:'Away-spinning deliveries his biggest constraint. Off-spin contains his boundary-hitting. Use spin against him in earlier phases — death overs are his stronger scoring phase.'
+    {name:'Moeen Ali', role:'Allrounder â€” batting', threat:'med',
+      phases:{pp:{r:'neg',t:'Well below avg Â· avg dismissal rate'}, mid:{r:'neu',t:'Average Â· avg dismissal rate'}, death:{r:'pos',t:'Above avg Â· avg dismissal rate'}},
+      matchups:{seam:{r:'neu',t:'Low dismissal rate Â· fewer boundaries'}, spin:{r:'pos',t:'Strength â€” high boundary rate'}},
+      summary:'Well below-avg PP scoring rate, average in middle. Death is where he adds clear value. Spin is a genuine strength â€” high boundary rate, particularly balls turning into a left-hander.',
+      target:'Away-spinning deliveries his biggest constraint. Off-spin contains his boundary rate. Use spin in earlier phases â€” death overs are his stronger scoring phase.'
     },
-    {name:'Matthew Revis', role:'Allrounder — batting', threat:'low',
-      phases:{pp:{r:'neg',t:'Below avg · low dismissal'}, mid:{r:'neg',t:'Below avg · very low dismissal'}, death:{r:'neg',t:'Below avg · very high dismissal'}},
-      matchups:{seam:{r:'neg',t:'Weakness — high dismissal risk'}, spin:{r:'pos',t:'Strength — very hard to dismiss'}},
-      summary:'Below-avg scoring across all phases. Exceptional middle-overs anchor. Death is a significant liability — below-avg scoring with very high dismissal.',
-      target:'Very hard to dismiss against spin, especially balls turning away. Balls turning into him carry the higher dismissal risk against spin.'
+    {name:'Matthew Revis', role:'Allrounder â€” batting', threat:'low',
+      phases:{pp:{r:'neg',t:'Below avg Â· low dismissal rate'}, mid:{r:'neg',t:'Below avg Â· very low dismissal rate'}, death:{r:'neg',t:'Below avg Â· very high dismissal rate'}},
+      matchups:{seam:{r:'neg',t:'Weakness â€” high dismissal rate'}, spin:{r:'pos',t:'Strength â€” very low dismissal rate'}},
+      summary:'Below-avg scoring rate across all phases. Exceptional middle-overs anchor. Death is a significant liability â€” below-avg scoring rate with a very high dismissal rate.',
+      target:'Very low dismissal rate against spin, especially balls turning away. Balls turning into him have a higher dismissal rate against spin.'
     },
-    {name:'George Hill', role:'Allrounder — batting', threat:'low',
-      phases:{pp:{r:'neg',t:'Well below avg · avg dismissal'}, mid:{r:'neg',t:'Below avg · high dismissal'}, death:{r:'neg',t:'Below avg · low dismissal'}},
-      matchups:{seam:{r:'pos',t:'Strength — very hard to dismiss'}, spin:{r:'neg',t:'Weakness — low scoring, high dismissal'}},
-      summary:'Below-avg scoring across all phases with elevated middle-overs dismissal. Hard to dismiss against seam but spin is a major weakness.',
-      target:'Finger spin most damaging, with balls turning into him particularly threatening.'
+    {name:'George Hill', role:'Allrounder â€” batting', threat:'low',
+      phases:{pp:{r:'neg',t:'Well below avg Â· avg dismissal rate'}, mid:{r:'neg',t:'Below avg Â· high dismissal rate'}, death:{r:'neg',t:'Below avg Â· low dismissal rate'}},
+      matchups:{seam:{r:'pos',t:'Strength â€” very low dismissal rate'}, spin:{r:'neg',t:'Weakness â€” low scoring rate, high dismissal rate'}},
+      summary:'Below-avg scoring rate across all phases with an elevated middle-overs dismissal rate. Low dismissal rate against seam but spin is a major weakness.',
+      target:'Finger spin most damaging. Balls turning into him have the highest dismissal rate.'
     },
-    {name:'Dom Bess', role:'Allrounder — batting', threat:'low',
-      phases:{pp:{r:'na',t:'Insufficient data'}, mid:{r:'neg',t:'Below avg · avg dismissal'}, death:{r:'neg',t:'Below avg · high dismissal'}},
-      matchups:{seam:{r:'neu',t:'Average — neutral across both'}, spin:{r:'pos',t:'Stronger — better boundary rate'}},
-      summary:'Below-avg scoring in both phases. Death is a liability. Handles spin better than seam.',
-      target:'Away-spinning deliveries contain him more. Balls turning into him more scoring-friendly.'
+    {name:'Dom Bess', role:'Allrounder â€” batting', threat:'low',
+      phases:{pp:{r:'na',t:'Insufficient data'}, mid:{r:'neg',t:'Below avg Â· avg dismissal rate'}, death:{r:'neg',t:'Below avg Â· high dismissal rate'}},
+      matchups:{seam:{r:'neu',t:'Average â€” neutral across both'}, spin:{r:'pos',t:'Stronger â€” better boundary rate'}},
+      summary:'Below-avg scoring rate in both phases. Death is a liability. Handles spin better than seam.',
+      target:'Away-spinning deliveries contain him more. Balls turning into him have a higher scoring rate.'
     },
   ],
   bowlers:[
-    {name:'Moeen Ali', role:'Off-spin — allrounder', threat:'high',
-      phases:{pp:{r:'pos',t:'Below avg economy · avg wickets'}, mid:{r:'pos',t:'Below avg economy · avg wickets'}, death:{r:'pos',t:'Well below avg economy · well above avg wickets'}},
-      matchups:{lh:{r:'pos',t:'Strength — above avg wicket threat'}, rh:{r:'neg',t:'Weakness — below avg wicket threat'}},
-      summary:'Below-avg economy across all phases. Death is exceptional — rare and highly valuable death option for a spinner. Prefers bowling at left-handers.',
-      target:'Promote right-handers to attack him — he\'s worse against RH.'
+    {name:'Moeen Ali', role:'Off-spin â€” allrounder', threat:'high',
+      phases:{pp:{r:'pos',t:'Below avg economy Â· avg wicket rate'}, mid:{r:'pos',t:'Below avg economy Â· avg wicket rate'}, death:{r:'pos',t:'Well below avg economy Â· well above avg wicket rate'}},
+      matchups:{lh:{r:'pos',t:'Strength â€” above avg wicket rate'}, rh:{r:'neg',t:'Weakness â€” below avg wicket rate'}},
+      summary:'Below-avg economy across all phases. Death is exceptional â€” a rare and highly valuable death option for a spinner. Prefers bowling at left-handers.',
+      target:'Promote right-handers to attack him â€” below-avg wicket rate vs RH.'
     },
     {name:'Andrew Tye', role:'Seam', threat:'high',
-      phases:{pp:{r:'neg',t:'Above avg economy · above avg wickets'}, mid:{r:'pos',t:'Below avg economy · well above avg wickets'}, death:{r:'pos',t:'Avg economy · above avg wickets'}},
-      matchups:{lh:{r:'pos',t:'Strength — above avg wickets and boundary restriction'}, rh:{r:'neu',t:'Neutral — near-avg across both'}},
-      summary:'Middle overs outstanding — below-avg economy, well above-avg wicket rate. Death also a strength. PP the weak phase — expensive with reduced boundary restriction.',
-      target:'Attack early in PP if possible. Prefers bowling at left-handers — keep right-handers facing him where possible.'
+      phases:{pp:{r:'neg',t:'Above avg economy Â· above avg wicket rate'}, mid:{r:'pos',t:'Below avg economy Â· well above avg wicket rate'}, death:{r:'pos',t:'Avg economy Â· above avg wicket rate'}},
+      matchups:{lh:{r:'pos',t:'Strength â€” above avg wicket rate and boundary restriction'}, rh:{r:'neu',t:'Neutral â€” near-avg across both'}},
+      summary:'Middle overs outstanding â€” below-avg economy with a well above-avg wicket rate. Death also a strength. PP the weak phase â€” high economy with a reduced boundary restriction.',
+      target:'Attack early in PP if possible. Prefers bowling at left-handers â€” keep right-handers facing him where possible.'
     },
     {name:'Hasan Ali', role:'Seam', threat:'high',
-      phases:{pp:{r:'pos',t:'Below avg economy · above avg wickets'}, mid:{r:'neu',t:'Avg economy · avg wickets'}, death:{r:'pos',t:'Below avg economy · above avg wickets'}},
-      matchups:{lh:{r:'neg',t:'Weakness — well below avg wickets, more boundaries'}, rh:{r:'pos',t:'Strength — above avg wickets, fewer boundaries'}},
+      phases:{pp:{r:'pos',t:'Below avg economy Â· above avg wicket rate'}, mid:{r:'neu',t:'Avg economy Â· avg wicket rate'}, death:{r:'pos',t:'Below avg economy Â· above avg wicket rate'}},
+      matchups:{lh:{r:'neg',t:'Weakness â€” well below avg wicket rate, more boundaries'}, rh:{r:'pos',t:'Strength â€” above avg wicket rate, fewer boundaries'}},
       summary:'Effective across all three phases. PP a genuine strength. Death wicket rate well above avg with controlled economy. Particular strength restricting boundaries in middle.',
-      target:'Promote left-handers to attack him — well below-avg wicket threat vs LH with more boundaries conceded.'
+      target:'Promote left-handers to attack him â€” well below-avg wicket rate vs LH with a higher boundary rate.'
     },
     {name:'Jafer Chohan', role:'Leg-spin', threat:'med',
-      phases:{pp:{r:'na',t:'Insufficient data'}, mid:{r:'neu',t:'Avg economy · avg wickets'}, death:{r:'neg',t:'Above avg economy · well above avg wickets'}},
-      matchups:{lh:{r:'pos',t:'Strength — above avg wickets, fewer boundaries'}, rh:{r:'neu',t:'Neutral — slightly below avg wickets'}},
+      phases:{pp:{r:'na',t:'Insufficient data'}, mid:{r:'neu',t:'Avg economy Â· avg wicket rate'}, death:{r:'neg',t:'Above avg economy Â· well above avg wicket rate'}},
+      matchups:{lh:{r:'pos',t:'Strength â€” above avg wicket rate, fewer boundaries'}, rh:{r:'neu',t:'Neutral â€” slightly below avg wicket rate'}},
       summary:'Middle overs his primary phase. Death wicket rate well above avg though economy slightly elevated. Prefers bowling at left-handers.',
-      target:'Promote right-handers to attack him.'
+      target:'Promote right-handers to attack him â€” slightly below-avg wicket rate vs RH.'
     },
-    {name:'Matthew Revis', role:'Seam — allrounder', threat:'med',
-      phases:{pp:{r:'neg',t:'Well above avg economy · above avg wickets'}, mid:{r:'neg',t:'Above avg economy · below avg wickets'}, death:{r:'pos',t:'Below avg economy · above avg wickets'}},
-      matchups:{lh:{r:'neg',t:'Weakness — well below avg wicket threat'}, rh:{r:'neu',t:'Neutral — marginally above avg wickets'}},
+    {name:'Matthew Revis', role:'Seam â€” allrounder', threat:'med',
+      phases:{pp:{r:'neg',t:'Well above avg economy Â· above avg wicket rate'}, mid:{r:'neg',t:'Above avg economy Â· below avg wicket rate'}, death:{r:'pos',t:'Below avg economy Â· above avg wicket rate'}},
+      matchups:{lh:{r:'neg',t:'Weakness â€” well below avg wicket rate'}, rh:{r:'neu',t:'Neutral â€” marginally above avg wicket rate'}},
       summary:'Death his best phase. PP expensive but wicket-taking. Middle overs below avg on both dimensions.',
-      target:'Promote left-handers to attack him outside of the death.'
+      target:'Promote left-handers to attack him outside of the death â€” well below-avg wicket rate vs LH.'
     },
-    {name:'George Hill', role:'Seam — allrounder', threat:'low',
-      phases:{pp:{r:'neg',t:'Above avg economy · above avg wickets'}, mid:{r:'neg',t:'Above avg economy · well below avg wickets'}, death:{r:'neg',t:'Well above avg economy · below avg wickets'}},
-      matchups:{lh:{r:'na',t:'Insufficient data'}, rh:{r:'neu',t:'Neutral — average across both'}},
-      summary:'Above-avg economy in all phases. Very low wicket rate in middle. Death expensive with below-avg wickets. PP wicket rate the one positive.',
-      target:'Look to attack — expensive across the board with limited wicket threat in middle and death.'
+    {name:'George Hill', role:'Seam â€” allrounder', threat:'low',
+      phases:{pp:{r:'neg',t:'Above avg economy Â· above avg wicket rate'}, mid:{r:'neg',t:'Above avg economy Â· well below avg wicket rate'}, death:{r:'neg',t:'Well above avg economy Â· below avg wicket rate'}},
+      matchups:{lh:{r:'na',t:'Insufficient data'}, rh:{r:'neu',t:'Neutral â€” average across both'}},
+      summary:'Above-avg economy in all phases. Very low wicket rate in middle. Death expensive with a below-avg wicket rate. PP wicket rate the one positive.',
+      target:'Look to attack â€” high economy across the board with a low wicket rate in middle and death.'
     },
-    {name:'Dom Bess', role:'Off-spin — allrounder', threat:'low',
-      phases:{pp:{r:'pos',t:'Below avg economy · below avg wickets'}, mid:{r:'pos',t:'Below avg economy · avg wickets'}, death:{r:'neg',t:'Above avg economy · below avg wickets'}},
-      matchups:{lh:{r:'pos',t:'Marginal strength — slightly above avg wickets'}, rh:{r:'neu',t:'Neutral — near-avg across both'}},
-      summary:'Middle overs his best phase. PP economy good but wickets below avg. Death expensive with below-avg wickets.',
-      target:'Attack in death overs — expensive there with limited wicket threat.'
+    {name:'Dom Bess', role:'Off-spin â€” allrounder', threat:'low',
+      phases:{pp:{r:'pos',t:'Below avg economy Â· below avg wicket rate'}, mid:{r:'pos',t:'Below avg economy Â· avg wicket rate'}, death:{r:'neg',t:'Above avg economy Â· below avg wicket rate'}},
+      matchups:{lh:{r:'pos',t:'Marginal strength â€” slightly above avg wicket rate'}, rh:{r:'neu',t:'Neutral â€” near-avg across both'}},
+      summary:'Middle overs his best phase. PP economy good but wicket rate below avg. Death expensive with a below-avg wicket rate.',
+      target:'Attack in death overs â€” high economy with a low wicket rate.'
     },
   ]
 };
 
-// Starter list — Durham 2026 T20 Blast fixtures
+// Starter list â€” Durham 2026 T20 Blast fixtures
 const STARTER = [
   {opp:'Yorkshire',        date:'2026-05-29', venue:'home'},
   {opp:'Nottinghamshire',  date:'2026-05-31', venue:'away'},
@@ -573,7 +573,7 @@ let saveTimer = null;
 
 function loadState(){
   try{
-    const raw = localStorage.getItem('durham-fixtures-t20-v4');
+    const raw = localStorage.getItem('durham-fixtures-t20-v5');
     if(raw){
       const parsed = JSON.parse(raw);
       // ensure all fixtures have notes + scout structure
@@ -584,7 +584,7 @@ function loadState(){
       return parsed;
     }
   }catch(e){}
-  // Seed with starter list — first Yorkshire match gets the dossier
+  // Seed with starter list â€” first Yorkshire match gets the dossier
   return {
     fixtures: STARTER.map((f,i)=>{
       const isFirstYorkshire = f.opp==='Yorkshire' && f.date==='2026-05-29';
@@ -593,9 +593,9 @@ function loadState(){
         ...f,
         confidence:50,
         notes:{
-          preview: isFirstYorkshire ? 'Yorkshire bring a top-heavy batting line-up with three above-average top-order options (Bairstow, Lyth, Luxton). Spin is the clear targeting angle — Lyth, Wharton and Hill all have significant spin weaknesses. Their bowling threat is concentrated in Moeen, Tye and Hasan Ali, each with distinct hand preferences we can exploit through batting order.' : '',
+          preview: isFirstYorkshire ? 'Yorkshire bring a top-heavy batting line-up with three above-average top-order options (Bairstow, Lyth, Luxton). Spin is the clear targeting angle â€” Lyth, Wharton and Hill all have significant spin weaknesses. Their bowling threat is concentrated in Moeen, Tye and Hasan Ali, each with distinct hand preferences we can exploit through batting order.' : '',
           selection:'',
-          tactics: isFirstYorkshire ? 'Front-load spin in the powerplay and middle overs where possible — avoid spin at the death. Try to keep right-handers facing Moeen and Chohan, left-handers facing Hasan. Tye is dangerous in middle — look to be set before he returns. Death bowling weakness is in Hill and Bess — earmark those overs.' : '',
+          tactics: isFirstYorkshire ? 'Front-load spin in the powerplay and middle overs where possible â€” avoid spin at the death. Try to keep right-handers facing Moeen and Chohan, left-handers facing Hasan. Tye is dangerous in middle â€” look to be set before he returns. Death bowling weakness is in Hill and Bess â€” earmark those overs.' : '',
           conditions:''
         },
         scout: isFirstYorkshire ? YORKSHIRE_2025 : {batters:[], bowlers:[], source:''}
@@ -606,7 +606,7 @@ function loadState(){
 function saveState(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(()=>{
-    localStorage.setItem('durham-fixtures-t20-v4', JSON.stringify(state));
+    localStorage.setItem('durham-fixtures-t20-v5', JSON.stringify(state));
   },200);
 }
 
@@ -649,7 +649,7 @@ function renderSidebar(){
     `<div class="mode-item ${activeFilter===o.k?'active':''}" onclick="setFilter('${o.k}')">${o.label} <span class="count">${o.n}</span></div>`
   ).join('');
 
-  // Fixture list — sorted by date asc
+  // Fixture list â€” sorted by date asc
   const sorted = [...state.fixtures].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   document.getElementById('fix-list').innerHTML = sorted.map(f=>{
     const isActive = activeFix===f.id;
@@ -659,7 +659,7 @@ function renderSidebar(){
       <div class="fix-dot" style="background:${dotColor}"></div>
       <div class="fix-meta">
         <div class="fix-opp">${escapeHtml(f.opp)}</div>
-        <div class="fix-date">${fmtDate(f.date)} · ${f.venue==='home'?'H':'A'}</div>
+        <div class="fix-date">${fmtDate(f.date)} Â· ${f.venue==='home'?'H':'A'}</div>
       </div>
       ${filled?`<div class="fix-conf" style="color:${confColor(f.confidence)}">${f.confidence}</div>`:''}
     </div>`;
@@ -704,17 +704,17 @@ function renderGrid(){
     ].join('');
     return `<div class="fcard ${hasNotes?'has-notes':''}" onclick="openDetail('${f.id}')">
       <div class="fcard-head">
-        <div class="fcard-venue-tag ${f.venue}">${f.venue==='home'?'Home · Riverside':'Away'}</div>
+        <div class="fcard-venue-tag ${f.venue}">${f.venue==='home'?'Home Â· Riverside':'Away'}</div>
       </div>
       <div class="fcard-opp">vs ${escapeHtml(f.opp)}</div>
       <div class="fcard-date">${fmtDate(f.date)||'TBD'}</div>
       <div class="fcard-conf">
         <div class="conf-bar"><div class="conf-fill" style="width:${hasNotes?f.confidence:0}%;background:${confColor(f.confidence)}"></div></div>
-        <div class="conf-val">${hasNotes?f.confidence+'%':'—'}</div>
+        <div class="conf-val">${hasNotes?f.confidence+'%':'â€”'}</div>
       </div>
       ${hasNotes
         ? `<div class="fcard-notes-summary">${chips}</div>`
-        : `<div class="fcard-empty">No thoughts logged yet — click to add.</div>`
+        : `<div class="fcard-empty">No thoughts logged yet â€” click to add.</div>`
       }
     </div>`;
   }).join('');
@@ -731,7 +731,7 @@ function openDetail(id){
   activeTab = hasScout ? 'batters' : 'overview';
 
   document.getElementById('detail-meta').innerHTML =
-    `<span class="fcard-venue-tag ${f.venue}">${f.venue==='home'?'Home · Riverside':'Away'}</span>`;
+    `<span class="fcard-venue-tag ${f.venue}">${f.venue==='home'?'Home Â· Riverside':'Away'}</span>`;
   document.getElementById('detail-opp').textContent = 'vs ' + f.opp;
   document.getElementById('detail-sub').textContent = fmtDateLong(f.date) || 'Date TBD';
 
@@ -820,7 +820,7 @@ function wireOverviewInputs(f){
   });
   document.getElementById('ed-opp').addEventListener('input',e=>{f.opp=e.target.value;saveState();renderGrid();renderSidebar();document.getElementById('detail-opp').textContent='vs '+e.target.value;});
   document.getElementById('ed-date').addEventListener('input',e=>{f.date=e.target.value;saveState();renderGrid();renderSidebar();document.getElementById('detail-sub').textContent=fmtDateLong(e.target.value)||'Date TBD';});
-  document.getElementById('ed-venue').addEventListener('change',e=>{f.venue=e.target.value;saveState();renderGrid();renderSidebar();document.getElementById('detail-meta').innerHTML=`<span class="fcard-venue-tag ${f.venue}">${f.venue==='home'?'Home · Riverside':'Away'}</span>`;});
+  document.getElementById('ed-venue').addEventListener('change',e=>{f.venue=e.target.value;saveState();renderGrid();renderSidebar();document.getElementById('detail-meta').innerHTML=`<span class="fcard-venue-tag ${f.venue}">${f.venue==='home'?'Home Â· Riverside':'Away'}</span>`;});
   document.getElementById('ed-conf').addEventListener('input',e=>{f.confidence=+e.target.value;saveState();renderGrid();renderSidebar();});
 }
 
@@ -828,7 +828,7 @@ function renderPlayerList(f, type){
   const players = f.scout?.[type] || [];
   if(!players.length){
     return `<div class="scout-empty">
-      <div style="font-size:32px;opacity:.3;margin-bottom:10px;">—</div>
+      <div style="font-size:32px;opacity:.3;margin-bottom:10px;">â€”</div>
       No ${type} scouted yet.<br>
       <span style="font-size:11px;">Upload an analysis PDF to populate this section.</span>
     </div>`;
@@ -986,7 +986,7 @@ function render(){
   const total = state.fixtures.length;
   const noted = state.fixtures.filter(f=>notesFilled(f)>0).length;
   document.getElementById('sub-line').textContent =
-    `${total} fixture${total===1?'':'s'} · ${noted} with notes`;
+    `${total} fixture${total===1?'':'s'} Â· ${noted} with notes`;
 }
 
 render();
