@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Durham CCC — Fixtures Grid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a1322;
+  --surface:#0e1b30;
+  --surface2:#13243d;
+  --surface3:#1a2e4d;
+  --border:rgba(255,255,255,.06);
+  --border2:rgba(255,255,255,.12);
+  --text:#f3f5f9;
+  --text2:#a4b0c4;
+  --text3:#6c7a92;
+  --gold:#e8b53a;
+  --gold-dim:rgba(232,181,58,.25);
+  --gold-soft:rgba(232,181,58,.08);
+  --red:#e0586a;
+  --amber:#e8872a;
+  --teal:#3aa896;
+  --green:#5cb874;
+  --radius:8px;
+  --radius-lg:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;}
+body{display:flex;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{
+  width:260px;flex-shrink:0;height:100vh;
+  background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:22px 16px;gap:18px;
+}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.06em;color:var(--gold);cursor:pointer;line-height:1;}
+.logo span{color:var(--text);}
+.logo-sub{font-size:11px;letter-spacing:.18em;color:var(--text3);text-transform:uppercase;margin-top:-4px;}
+
+.section-label{font-size:10px;letter-spacing:.16em;color:var(--text3);text-transform:uppercase;margin:6px 4px 4px;}
+
+.mode-list,.fixture-list{display:flex;flex-direction:column;gap:3px;}
+.mode-item{
+  padding:9px 12px;border-radius:var(--radius);font-size:13px;color:var(--text2);
+  cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:9px;
+}
+.mode-item:hover{background:var(--surface2);color:var(--text);}
+.mode-item.active{background:var(--gold-soft);color:var(--gold);}
+.mode-item .count{margin-left:auto;font-size:11px;color:var(--text3);background:var(--surface3);padding:2px 7px;border-radius:10px;}
+.mode-item.active .count{background:var(--gold-dim);color:var(--gold);}
+
+.fixture-list{overflow-y:auto;flex:1;padding-right:4px;}
+.fixture-list::-webkit-scrollbar{width:6px;}
+.fixture-list::-webkit-scrollbar-track{background:transparent;}
+.fixture-list::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px;}
+
+.fix-item{
+  padding:10px 11px;border-radius:var(--radius);cursor:pointer;transition:all .15s;
+  border:1px solid transparent;display:flex;align-items:center;gap:10px;
+}
+.fix-item:hover{background:var(--surface2);}
+.fix-item.active{background:var(--surface2);border-color:var(--gold-dim);}
+.fix-dot{
+  width:10px;height:10px;border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 0 2px rgba(255,255,255,.04);
+}
+.fix-meta{flex:1;min-width:0;}
+.fix-opp{font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.fix-date{font-size:11px;color:var(--text3);margin-top:1px;}
+.fix-conf{
+  font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;
+  background:var(--surface3);color:var(--text2);letter-spacing:.04em;
+}
+
+.sidebar-foot{padding-top:10px;border-top:1px solid var(--border);display:flex;gap:6px;}
+.btn-side{
+  flex:1;padding:8px;border-radius:var(--radius);background:var(--surface3);
+  border:1px solid var(--border2);color:var(--text2);font-size:11px;font-weight:600;
+  letter-spacing:.05em;cursor:pointer;text-transform:uppercase;transition:all .15s;font-family:inherit;
+}
+.btn-side:hover{color:var(--gold);border-color:var(--gold-dim);}
+
+/* MAIN */
+.main{flex:1;height:100vh;overflow-y:auto;padding:28px 36px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.topbar h1{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:.04em;font-weight:400;line-height:1;}
+.topbar h1 .accent{color:var(--gold);}
+.topbar-sub{font-size:13px;color:var(--text3);margin-top:4px;}
+.top-actions{display:flex;gap:8px;}
+.btn{
+  padding:9px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;
+  background:var(--surface3);border:1px solid var(--border2);color:var(--text2);
+  cursor:pointer;transition:all .15s;font-family:inherit;
+}
+.btn:hover{color:var(--text);border-color:rgba(255,255,255,.22);}
+.btn-primary{background:var(--gold);color:#1a1303;border-color:var(--gold);}
+.btn-primary:hover{background:#f0c350;color:#1a1303;}
+
+/* GRID OF FIXTURE CARDS */
+.fixtures-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:14px;
+}
+.fcard{
+  background:linear-gradient(160deg,var(--surface2) 0%,var(--surface) 100%);
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:16px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;
+}
+.fcard:hover{transform:translateY(-3px);border-color:var(--gold-dim);box-shadow:0 12px 30px rgba(0,0,0,.4);}
+.fcard.has-notes::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--gold),transparent);
+}
+.fcard-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px;}
+.fcard-venue-tag{
+  font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  padding:3px 8px;border-radius:4px;background:var(--surface3);color:var(--text2);
+}
+.fcard-venue-tag.home{background:rgba(58,168,150,.15);color:var(--teal);}
+.fcard-venue-tag.away{background:rgba(232,135,42,.15);color:var(--amber);}
+
+.fcard-opp{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.03em;line-height:1.05;margin-bottom:4px;}
+.fcard-date{font-size:12px;color:var(--text3);margin-bottom:14px;}
+
+.fcard-conf{
+  display:flex;align-items:center;gap:8px;margin-bottom:12px;
+}
+.conf-bar{
+  flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;
+}
+.conf-fill{
+  height:100%;border-radius:3px;transition:width .3s;
+}
+.conf-val{font-size:11px;font-weight:700;color:var(--text2);min-width:34px;text-align:right;letter-spacing:.04em;}
+
+.fcard-notes-summary{
+  display:flex;gap:5px;flex-wrap:wrap;margin-top:10px;padding-top:12px;
+  border-top:1px solid var(--border);
+}
+.note-chip{
+  font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 7px;border-radius:4px;
+  background:var(--surface3);color:var(--text3);
+}
+.note-chip.filled{background:var(--gold-soft);color:var(--gold);}
+
+.fcard-empty{
+  font-size:11px;color:var(--text3);font-style:italic;margin-top:10px;
+}
+
+/* EMPTY STATE */
+.empty-state{
+  text-align:center;padding:80px 20px;color:var(--text3);
+}
+.empty-state h2{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--text2);margin-bottom:8px;letter-spacing:.04em;}
+
+/* DETAIL PANEL (slide-over) */
+.detail-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);
+  opacity:0;pointer-events:none;transition:opacity .2s;z-index:50;
+}
+.detail-overlay.open{opacity:1;pointer-events:auto;}
+.detail-panel{
+  position:fixed;top:0;right:0;height:100vh;width:min(820px,96vw);
+  background:var(--surface);border-left:1px solid var(--border2);
+  transform:translateX(100%);transition:transform .25s ease;
+  z-index:51;display:flex;flex-direction:column;
+  box-shadow:-20px 0 50px rgba(0,0,0,.5);
+}
+.detail-panel.open{transform:translateX(0);}
+
+/* Tabs */
+.detail-tabs{display:flex;gap:2px;padding:0 28px;border-bottom:1px solid var(--border);background:var(--surface);}
+.detail-tab{
+  padding:12px 16px;font-size:12px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--text3);cursor:pointer;
+  border-bottom:2px solid transparent;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;
+}
+.detail-tab:hover{color:var(--text2);}
+.detail-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.detail-tab .tab-count{
+  display:inline-block;margin-left:6px;font-size:10px;padding:1px 6px;border-radius:8px;
+  background:var(--surface3);color:var(--text3);font-weight:700;
+}
+.detail-tab.active .tab-count{background:var(--gold-soft);color:var(--gold);}
+
+/* Player scouting cards */
+.player-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:16px;margin-bottom:14px;
+  transition:border-color .15s;
+}
+.player-card:hover{border-color:var(--border2);}
+.pc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.pc-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.03em;line-height:1.05;}
+.pc-role{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+.pc-threat{
+  font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:.08em;text-transform:uppercase;flex-shrink:0;
+}
+.pc-threat.high{background:rgba(224,88,106,.18);color:var(--red);}
+.pc-threat.med{background:rgba(232,135,42,.18);color:var(--amber);}
+.pc-threat.low{background:rgba(58,168,150,.18);color:var(--teal);}
+
+.pc-strip-label{
+  font-size:9px;letter-spacing:.14em;color:var(--text3);text-transform:uppercase;font-weight:700;
+  margin-bottom:6px;
+}
+.pc-strips{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;}
+.pc-matchups{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:12px;}
+.pc-pill{
+  border-left:3px solid var(--col,var(--text3));
+  background:var(--surface3);
+  padding:7px 10px;border-radius:4px;
+}
+.pc-pill-head{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--col,var(--text2));margin-bottom:2px;}
+.pc-pill-text{font-size:11px;color:var(--text2);line-height:1.3;}
+
+.pc-summary{
+  font-size:12px;color:var(--text2);line-height:1.55;
+  padding-top:10px;border-top:1px solid var(--border);
+}
+.pc-target{
+  margin-top:8px;padding:8px 10px;background:var(--gold-soft);border-left:3px solid var(--gold);
+  font-size:11px;color:var(--gold);line-height:1.45;border-radius:0 4px 4px 0;
+}
+.pc-target b{font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:10px;color:var(--gold);display:block;margin-bottom:2px;}
+
+.scout-meta{
+  font-size:11px;color:var(--text3);padding:10px 0 16px;font-style:italic;
+}
+.scout-section-head{
+  font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em;color:var(--gold);
+  margin:8px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border);
+}
+.scout-empty{
+  text-align:center;padding:50px 20px;color:var(--text3);font-size:13px;
+}
+
+.detail-head{
+  padding:24px 28px 18px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:flex-start;gap:14px;
+}
+.detail-title{flex:1;min-width:0;}
+.detail-meta-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap;}
+.detail-opp{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.04em;line-height:1;margin-bottom:6px;}
+.detail-sub{font-size:12px;color:var(--text3);}
+.btn-close{
+  background:var(--surface3);border:1px solid var(--border2);color:var(--text2);
+  width:34px;height:34px;border-radius:var(--radius);cursor:pointer;font-size:18px;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;
+}
+.btn-close:hover{color:var(--text);border-color:rgba(255,255,255,.25);}
+
+.detail-body{flex:1;overflow-y:auto;padding:22px 28px 30px;}
+.detail-body::-webkit-scrollbar{width:6px;}
+.detail-body::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px;}
+
+.field-group{margin-bottom:22px;}
+.field-label{
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;
+  font-size:11px;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;font-weight:700;
+}
+.field-label .label-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);}
+textarea{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:11px 13px;color:var(--text);
+  font-family:inherit;font-size:13px;line-height:1.55;resize:vertical;
+  min-height:80px;transition:border-color .15s;
+}
+textarea:focus{outline:none;border-color:var(--gold-dim);}
+textarea::placeholder{color:var(--text3);}
+
+.conf-row{display:flex;align-items:center;gap:14px;}
+.conf-slider{
+  flex:1;height:6px;-webkit-appearance:none;appearance:none;
+  background:var(--surface3);border-radius:3px;outline:none;cursor:pointer;
+}
+.conf-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+  background:var(--gold);cursor:pointer;border:3px solid var(--surface);
+  box-shadow:0 0 0 1px var(--gold);
+}
+.conf-slider::-moz-range-thumb{
+  width:18px;height:18px;border-radius:50%;background:var(--gold);
+  cursor:pointer;border:3px solid var(--surface);box-shadow:0 0 0 1px var(--gold);
+}
+.conf-display{
+  font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);
+  letter-spacing:.04em;min-width:48px;text-align:right;
+}
+
+.date-row{display:flex;gap:10px;align-items:center;}
+.text-input,.date-input{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:9px 12px;color:var(--text);
+  font-family:inherit;font-size:13px;transition:border-color .15s;
+}
+.text-input:focus,.date-input:focus{outline:none;border-color:var(--gold-dim);}
+.text-input{flex:1;}
+
+.detail-actions{padding:16px 28px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:space-between;}
+.btn-danger{
+  background:transparent;border:1px solid rgba(224,88,106,.3);
+  color:var(--red);font-size:12px;font-weight:600;
+}
+.btn-danger:hover{background:rgba(224,88,106,.1);border-color:var(--red);}
+
+/* ADD FIXTURE MODAL */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);
+  display:none;align-items:center;justify-content:center;z-index:100;
+  padding:20px;
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);
+  width:100%;max-width:440px;padding:26px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+}
+.modal h3{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gold);letter-spacing:.04em;margin-bottom:18px;}
+.modal-field{margin-bottom:14px;}
+.modal-field label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;font-weight:600;}
+.modal-field input,.modal-field select{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:10px 12px;color:var(--text);
+  font-family:inherit;font-size:13px;
+}
+.modal-field input:focus,.modal-field select:focus{outline:none;border-color:var(--gold-dim);}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+
+/* FILTERS */
+.filters{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.filter-chip{
+  padding:6px 13px;border-radius:14px;font-size:11px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;cursor:pointer;
+  background:var(--surface2);color:var(--text2);border:1px solid var(--border);
+  transition:all .15s;
+}
+.filter-chip:hover{color:var(--text);}
+.filter-chip.active{background:var(--gold-soft);color:var(--gold);border-color:var(--gold-dim);}
+
+@media (max-width:780px){
+  .sidebar{display:none;}
+  .main{padding:20px 16px;}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div>
+    <div class="logo" onclick="goHome()">DURHAM <span>CCC</span></div>
+    <div class="logo-sub">T20 Blast Brief</div>
+  </div>
+
+  <div>
+    <div class="section-label">Overview</div>
+    <div class="mode-list" id="comp-list"></div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:6px;min-height:0;flex:1;">
+    <div class="section-label">Upcoming</div>
+    <div class="fixture-list" id="fix-list"></div>
+  </div>
+
+  <div class="sidebar-foot">
+    <button class="btn-side" onclick="exportData()">Export</button>
+    <button class="btn-side" onclick="document.getElementById('import-file').click()">Import</button>
+    <input type="file" id="import-file" accept="application/json" style="display:none" onchange="importData(event)">
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div>
+      <h1>T20 Blast <span class="accent">Fixtures</span></h1>
+      <div class="topbar-sub" id="sub-line">Match-day thoughts and analysis</div>
+    </div>
+    <div class="top-actions">
+      <button class="btn btn-primary" onclick="openAddModal()">+ Add Fixture</button>
+    </div>
+  </div>
+
+  <div class="fixtures-grid" id="grid"></div>
+</main>
+
+<!-- Detail slide-over -->
+<div class="detail-overlay" id="detail-overlay" onclick="closeDetail()"></div>
+<aside class="detail-panel" id="detail-panel">
+  <div class="detail-head">
+    <div class="detail-title">
+      <div class="detail-meta-row" id="detail-meta"></div>
+      <div class="detail-opp" id="detail-opp"></div>
+      <div class="detail-sub" id="detail-sub"></div>
+    </div>
+    <button class="btn-close" onclick="closeDetail()">×</button>
+  </div>
+  <div class="detail-tabs" id="detail-tabs"></div>
+  <div class="detail-body" id="detail-body"></div>
+  <div class="detail-actions">
+    <button class="btn btn-danger" onclick="deleteFixture()">Delete fixture</button>
+    <button class="btn btn-primary" onclick="closeDetail()">Done</button>
+  </div>
+</aside>
+
+<!-- Add fixture modal -->
+<div class="modal-overlay" id="add-modal" onclick="if(event.target===this)closeAddModal()">
+  <div class="modal">
+    <h3>Add Fixture</h3>
+    <div class="modal-field">
+      <label>Opposition</label>
+      <input type="text" id="add-opp" placeholder="e.g. Lancashire Lightning">
+    </div>
+    <div class="modal-field">
+      <label>Date</label>
+      <input type="date" id="add-date">
+    </div>
+    <div class="modal-field">
+      <label>Venue</label>
+      <select id="add-venue">
+        <option value="home">Home (Riverside)</option>
+        <option value="away">Away</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeAddModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addFixture()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- DATA ----
+const NOTE_FIELDS = [
+  {key:'preview',   label:'Match Preview / Verdict',  placeholder:'Overall read on the match, key storylines, what to expect…'},
+  {key:'selection', label:'Selection Thoughts',       placeholder:'XI considerations, who comes in, who sits out, balance of side…'},
+  {key:'tactics',   label:'Tactical Notes',           placeholder:'Field settings, bowling plans, matchups to exploit, batting approach…'},
+  {key:'conditions',label:'Conditions (Pitch / Weather)', placeholder:'Pitch character, forecast, expected behaviour, toss implications…'},
+];
+
+// Rating buckets — used for colour coding on phase / matchup strips
+// 'pos' = good for them (problem for us), 'neg' = bad for them (target), 'neu' = neutral, 'na' = no data
+const RATING_META = {
+  pos: {color:'var(--red)',  label:'Strength'},
+  neg: {color:'var(--green)',label:'Weakness'},
+  neu: {color:'var(--text2)',label:'Neutral'},
+  na:  {color:'var(--text3)',label:'No data'},
+};
+
+// Yorkshire scouting dossier — derived from the PDF
+const YORKSHIRE_2025 = {
+  source:'2025 T20 Blast squad analysis · all T20 cricket since 2021',
+  batters:[
+    {name:'Jonny Bairstow', role:'Top-order bat', threat:'high',
+      phases:{pp:{r:'pos',t:'Above avg · low dismissal'}, mid:{r:'pos',t:'Above avg · low dismissal'}, death:{r:'pos',t:'Well above avg · low dismissal'}},
+      matchups:{seam:{r:'pos',t:'Strength — hard to dismiss'}, spin:{r:'neu',t:'Slight dismissal risk — manageable'}},
+      summary:'Above-avg scoring across all three phases with low dismissal. Death is a major strength. Very hard to dismiss against seam. Slight elevation in dismissal risk vs spin, particularly balls turning away. Off-spin contains him.',
+      target:'Off-spin contains him best; balls spinning away offer the best dismissal chance. Save spin options for earlier phases — avoid spin at the death given his death-hitting strength.'
+    },
+    {name:'Adam Lyth', role:'Top-order bat', threat:'med',
+      phases:{pp:{r:'pos',t:'Above avg · slightly high dismissal'}, mid:{r:'pos',t:'Above avg · high dismissal'}, death:{r:'neu',t:'Avg · very high dismissal'}},
+      matchups:{seam:{r:'pos',t:'Strength — high scoring rate'}, spin:{r:'neg',t:'Weakness — low scoring, reduced boundary threat'}},
+      summary:'Above-avg scoring PP and middle, but elevated dismissal throughout. Spin is a clear weakness — below-avg scoring with reduced boundaries and higher dismissal risk.',
+      target:'Finger spin is the primary targeting angle. Balls spinning into him hardest to score off; balls spinning away carry dismissal risk.'
+    },
+    {name:'William Luxton', role:'Top-order bat', threat:'med',
+      phases:{pp:{r:'pos',t:'Above avg · high dismissal'}, mid:{r:'pos',t:'Above avg · avg dismissal'}, death:{r:'pos',t:'Above avg · low dismissal'}},
+      matchups:{seam:{r:'neu',t:'Slightly higher dismissal risk'}, spin:{r:'neu',t:'Slightly lower dismissal · fewer boundaries'}},
+      summary:'Above-avg scoring PP and middle. PP scoring comes at elevated risk. No dominant spin/seam preference.',
+      target:'Away-spinning deliveries the clearest dismissal threat against spin, with reduced boundary rate against them.'
+    },
+    {name:'James Wharton', role:'Middle-order bat', threat:'med',
+      phases:{pp:{r:'pos',t:'Above avg · avg dismissal'}, mid:{r:'neu',t:'Average · avg dismissal'}, death:{r:'pos',t:'Above avg · avg dismissal'}},
+      matchups:{seam:{r:'pos',t:'Strength — good scoring and boundary rate'}, spin:{r:'neg',t:'Weakness — low boundary threat'}},
+      summary:'Reliable across phases with well-managed dismissal rates. Spin is a clear targeting angle — reduced scoring, lower boundary threat, higher dismissal risk.',
+      target:'Left-arm finger spin is most restrictive. Balls turning into him (off-spin to right-hander) actually his stronger spin type.'
+    },
+    {name:'Moeen Ali', role:'Allrounder — batting', threat:'med',
+      phases:{pp:{r:'neg',t:'Well below avg · avg dismissal'}, mid:{r:'neu',t:'Average · avg dismissal'}, death:{r:'pos',t:'Above avg · avg dismissal'}},
+      matchups:{seam:{r:'neu',t:'Hard to dismiss · fewer boundaries'}, spin:{r:'pos',t:'Strength — high boundary rate'}},
+      summary:'Well below-avg PP scoring, avg in middle. Death is where he adds clear value. Spin is a genuine strength for him — high boundary rate, particularly balls turning in to a left-hander.',
+      target:'Away-spinning deliveries his biggest constraint. Off-spin contains his boundary-hitting. Use spin against him in earlier phases — death overs are his stronger scoring phase.'
+    },
+    {name:'Matthew Revis', role:'Allrounder — batting', threat:'low',
+      phases:{pp:{r:'neg',t:'Below avg · low dismissal'}, mid:{r:'neg',t:'Below avg · very low dismissal'}, death:{r:'neg',t:'Below avg · very high dismissal'}},
+      matchups:{seam:{r:'neg',t:'Weakness — high dismissal risk'}, spin:{r:'pos',t:'Strength — very hard to dismiss'}},
+      summary:'Below-avg scoring across all phases. Exceptional middle-overs anchor. Death is a significant liability — below-avg scoring with very high dismissal.',
+      target:'Very hard to dismiss against spin, especially balls turning away. Balls turning into him carry the higher dismissal risk against spin.'
+    },
+    {name:'George Hill', role:'Allrounder — batting', threat:'low',
+      phases:{pp:{r:'neg',t:'Well below avg · avg dismissal'}, mid:{r:'neg',t:'Below avg · high dismissal'}, death:{r:'neg',t:'Below avg · low dismissal'}},
+      matchups:{seam:{r:'pos',t:'Strength — very hard to dismiss'}, spin:{r:'neg',t:'Weakness — low scoring, high dismissal'}},
+      summary:'Below-avg scoring across all phases with elevated middle-overs dismissal. Hard to dismiss against seam but spin is a major weakness.',
+      target:'Finger spin most damaging, with balls turning into him particularly threatening.'
+    },
+    {name:'Dom Bess', role:'Allrounder — batting', threat:'low',
+      phases:{pp:{r:'na',t:'Insufficient data'}, mid:{r:'neg',t:'Below avg · avg dismissal'}, death:{r:'neg',t:'Below avg · high dismissal'}},
+      matchups:{seam:{r:'neu',t:'Average — neutral across both'}, spin:{r:'pos',t:'Stronger — better boundary rate'}},
+      summary:'Below-avg scoring in both phases. Death is a liability. Handles spin better than seam.',
+      target:'Away-spinning deliveries contain him more. Balls turning into him more scoring-friendly.'
+    },
+  ],
+  bowlers:[
+    {name:'Moeen Ali', role:'Off-spin — allrounder', threat:'high',
+      phases:{pp:{r:'pos',t:'Below avg economy · avg wickets'}, mid:{r:'pos',t:'Below avg economy · avg wickets'}, death:{r:'pos',t:'Well below avg economy · well above avg wickets'}},
+      matchups:{lh:{r:'pos',t:'Strength — above avg wicket threat'}, rh:{r:'neg',t:'Weakness — below avg wicket threat'}},
+      summary:'Below-avg economy across all phases. Death is exceptional — rare and highly valuable death option for a spinner. Prefers bowling at left-handers.',
+      target:'Promote right-handers to attack him — he\'s worse against RH.'
+    },
+    {name:'Andrew Tye', role:'Seam', threat:'high',
+      phases:{pp:{r:'neg',t:'Above avg economy · above avg wickets'}, mid:{r:'pos',t:'Below avg economy · well above avg wickets'}, death:{r:'pos',t:'Avg economy · above avg wickets'}},
+      matchups:{lh:{r:'pos',t:'Strength — above avg wickets and boundary restriction'}, rh:{r:'neu',t:'Neutral — near-avg across both'}},
+      summary:'Middle overs outstanding — below-avg economy, well above-avg wicket rate. Death also a strength. PP the weak phase — expensive with reduced boundary restriction.',
+      target:'Attack early in PP if possible. Prefers bowling at left-handers — keep right-handers facing him where possible.'
+    },
+    {name:'Hasan Ali', role:'Seam', threat:'high',
+      phases:{pp:{r:'pos',t:'Below avg economy · above avg wickets'}, mid:{r:'neu',t:'Avg economy · avg wickets'}, death:{r:'pos',t:'Below avg economy · above avg wickets'}},
+      matchups:{lh:{r:'neg',t:'Weakness — well below avg wickets, more boundaries'}, rh:{r:'pos',t:'Strength — above avg wickets, fewer boundaries'}},
+      summary:'Effective across all three phases. PP a genuine strength. Death wicket rate well above avg with controlled economy. Particular strength restricting boundaries in middle.',
+      target:'Promote left-handers to attack him — well below-avg wicket threat vs LH with more boundaries conceded.'
+    },
+    {name:'Jafer Chohan', role:'Leg-spin', threat:'med',
+      phases:{pp:{r:'na',t:'Insufficient data'}, mid:{r:'neu',t:'Avg economy · avg wickets'}, death:{r:'neg',t:'Above avg economy · well above avg wickets'}},
+      matchups:{lh:{r:'pos',t:'Strength — above avg wickets, fewer boundaries'}, rh:{r:'neu',t:'Neutral — slightly below avg wickets'}},
+      summary:'Middle overs his primary phase. Death wicket rate well above avg though economy slightly elevated. Prefers bowling at left-handers.',
+      target:'Promote right-handers to attack him.'
+    },
+    {name:'Matthew Revis', role:'Seam — allrounder', threat:'med',
+      phases:{pp:{r:'neg',t:'Well above avg economy · above avg wickets'}, mid:{r:'neg',t:'Above avg economy · below avg wickets'}, death:{r:'pos',t:'Below avg economy · above avg wickets'}},
+      matchups:{lh:{r:'neg',t:'Weakness — well below avg wicket threat'}, rh:{r:'neu',t:'Neutral — marginally above avg wickets'}},
+      summary:'Death his best phase. PP expensive but wicket-taking. Middle overs below avg on both dimensions.',
+      target:'Promote left-handers to attack him outside of the death.'
+    },
+    {name:'George Hill', role:'Seam — allrounder', threat:'low',
+      phases:{pp:{r:'neg',t:'Above avg economy · above avg wickets'}, mid:{r:'neg',t:'Above avg economy · well below avg wickets'}, death:{r:'neg',t:'Well above avg economy · below avg wickets'}},
+      matchups:{lh:{r:'na',t:'Insufficient data'}, rh:{r:'neu',t:'Neutral — average across both'}},
+      summary:'Above-avg economy in all phases. Very low wicket rate in middle. Death expensive with below-avg wickets. PP wicket rate the one positive.',
+      target:'Look to attack — expensive across the board with limited wicket threat in middle and death.'
+    },
+    {name:'Dom Bess', role:'Off-spin — allrounder', threat:'low',
+      phases:{pp:{r:'pos',t:'Below avg economy · below avg wickets'}, mid:{r:'pos',t:'Below avg economy · avg wickets'}, death:{r:'neg',t:'Above avg economy · below avg wickets'}},
+      matchups:{lh:{r:'pos',t:'Marginal strength — slightly above avg wickets'}, rh:{r:'neu',t:'Neutral — near-avg across both'}},
+      summary:'Middle overs his best phase. PP economy good but wickets below avg. Death expensive with below-avg wickets.',
+      target:'Attack in death overs — expensive there with limited wicket threat.'
+    },
+  ]
+};
+
+// Starter list — Durham 2026 T20 Blast fixtures
+const STARTER = [
+  {opp:'Yorkshire',        date:'2026-05-29', venue:'home'},
+  {opp:'Nottinghamshire',  date:'2026-05-31', venue:'away'},
+  {opp:'Northamptonshire', date:'2026-06-06', venue:'home'},
+  {opp:'Lancashire',       date:'2026-06-09', venue:'home'},
+  {opp:'Middlesex',        date:'2026-06-28', venue:'away'},
+  {opp:'Yorkshire',        date:'2026-07-03', venue:'away'},
+  {opp:'Nottinghamshire',  date:'2026-07-05', venue:'home'},
+  {opp:'Leicestershire',   date:'2026-07-08', venue:'away'},
+  {opp:'Derbyshire',       date:'2026-07-10', venue:'home'},
+  {opp:'Lancashire',       date:'2026-07-12', venue:'away'},
+];
+
+let state = loadState();
+let activeFilter = 'all';
+let activeFix = null;
+let activeTab = 'overview'; // overview | batters | bowlers
+let saveTimer = null;
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem('durham-fixtures-t20-v4');
+    if(raw){
+      const parsed = JSON.parse(raw);
+      // ensure all fixtures have notes + scout structure
+      parsed.fixtures.forEach(f=>{
+        f.notes = f.notes || {};
+        f.scout = f.scout || {batters:[], bowlers:[], source:''};
+      });
+      return parsed;
+    }
+  }catch(e){}
+  // Seed with starter list — first Yorkshire match gets the dossier
+  return {
+    fixtures: STARTER.map((f,i)=>{
+      const isFirstYorkshire = f.opp==='Yorkshire' && f.date==='2026-05-29';
+      return {
+        id:'fx_'+Date.now()+'_'+i,
+        ...f,
+        confidence:50,
+        notes:{
+          preview: isFirstYorkshire ? 'Yorkshire bring a top-heavy batting line-up with three above-average top-order options (Bairstow, Lyth, Luxton). Spin is the clear targeting angle — Lyth, Wharton and Hill all have significant spin weaknesses. Their bowling threat is concentrated in Moeen, Tye and Hasan Ali, each with distinct hand preferences we can exploit through batting order.' : '',
+          selection:'',
+          tactics: isFirstYorkshire ? 'Front-load spin in the powerplay and middle overs where possible — avoid spin at the death. Try to keep right-handers facing Moeen and Chohan, left-handers facing Hasan. Tye is dangerous in middle — look to be set before he returns. Death bowling weakness is in Hill and Bess — earmark those overs.' : '',
+          conditions:''
+        },
+        scout: isFirstYorkshire ? YORKSHIRE_2025 : {batters:[], bowlers:[], source:''}
+      };
+    })
+  };
+}
+function saveState(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    localStorage.setItem('durham-fixtures-t20-v4', JSON.stringify(state));
+  },200);
+}
+
+function fmtDate(iso){
+  if(!iso) return '';
+  const d = new Date(iso+'T00:00:00');
+  return d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+}
+function fmtDateLong(iso){
+  if(!iso) return '';
+  const d = new Date(iso+'T00:00:00');
+  return d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+function notesFilled(f){
+  const noteCount = Object.values(f.notes||{}).filter(v=>v&&v.trim()).length;
+  const scoutCount = ((f.scout?.batters?.length||0) + (f.scout?.bowlers?.length||0)) > 0 ? 1 : 0;
+  return noteCount + scoutCount;
+}
+function confColor(c){
+  if(c>=70) return 'var(--green)';
+  if(c>=45) return 'var(--gold)';
+  if(c>=25) return 'var(--amber)';
+  return 'var(--red)';
+}
+
+// ---- SIDEBAR ----
+function renderSidebar(){
+  // Overview counters
+  const all = state.fixtures.length;
+  const home = state.fixtures.filter(f=>f.venue==='home').length;
+  const away = state.fixtures.filter(f=>f.venue==='away').length;
+  const noted = state.fixtures.filter(f=>notesFilled(f)>0).length;
+  const overview = [
+    {k:'all',  label:'All Fixtures', n:all},
+    {k:'home', label:'Home',         n:home},
+    {k:'away', label:'Away',         n:away},
+    {k:'noted',label:'With Notes',   n:noted},
+  ];
+  document.getElementById('comp-list').innerHTML = overview.map(o=>
+    `<div class="mode-item ${activeFilter===o.k?'active':''}" onclick="setFilter('${o.k}')">${o.label} <span class="count">${o.n}</span></div>`
+  ).join('');
+
+  // Fixture list — sorted by date asc
+  const sorted = [...state.fixtures].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  document.getElementById('fix-list').innerHTML = sorted.map(f=>{
+    const isActive = activeFix===f.id;
+    const filled = notesFilled(f);
+    const dotColor = filled ? confColor(f.confidence) : 'var(--surface3)';
+    return `<div class="fix-item ${isActive?'active':''}" onclick="openDetail('${f.id}')">
+      <div class="fix-dot" style="background:${dotColor}"></div>
+      <div class="fix-meta">
+        <div class="fix-opp">${escapeHtml(f.opp)}</div>
+        <div class="fix-date">${fmtDate(f.date)} · ${f.venue==='home'?'H':'A'}</div>
+      </div>
+      ${filled?`<div class="fix-conf" style="color:${confColor(f.confidence)}">${f.confidence}</div>`:''}
+    </div>`;
+  }).join('') || `<div style="font-size:12px;color:var(--text3);padding:10px 4px">No fixtures yet</div>`;
+}
+
+// ---- FILTERS ----
+function setFilter(k){activeFilter=k;render();}
+
+function getFiltered(){
+  return [...state.fixtures].sort((a,b)=>(a.date||'').localeCompare(b.date||'')).filter(f=>{
+    if(activeFilter==='all') return true;
+    if(activeFilter==='home') return f.venue==='home';
+    if(activeFilter==='away') return f.venue==='away';
+    if(activeFilter==='noted') return notesFilled(f)>0;
+    return true;
+  });
+}
+
+// ---- GRID ----
+function renderGrid(){
+  const list = getFiltered();
+  const grid = document.getElementById('grid');
+  if(!list.length){
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <h2>No fixtures here</h2>
+      <p>Adjust the filter or add a fixture to get started.</p>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = list.map(f=>{
+    const filledCount = notesFilled(f);
+    const hasNotes = filledCount>0;
+    const hasScout = (f.scout?.batters?.length||0)+(f.scout?.bowlers?.length||0)>0;
+    const noteShort = {preview:'Preview',selection:'Selection',tactics:'Tactics',conditions:'Conditions'};
+    const chips = [
+      `<span class="note-chip ${hasScout?'filled':''}">Scout</span>`,
+      ...NOTE_FIELDS.map(nf=>{
+        const filled = (f.notes||{})[nf.key]?.trim();
+        return `<span class="note-chip ${filled?'filled':''}">${noteShort[nf.key]}</span>`;
+      })
+    ].join('');
+    return `<div class="fcard ${hasNotes?'has-notes':''}" onclick="openDetail('${f.id}')">
+      <div class="fcard-head">
+        <div class="fcard-venue-tag ${f.venue}">${f.venue==='home'?'Home · Riverside':'Away'}</div>
+      </div>
+      <div class="fcard-opp">vs ${escapeHtml(f.opp)}</div>
+      <div class="fcard-date">${fmtDate(f.date)||'TBD'}</div>
+      <div class="fcard-conf">
+        <div class="conf-bar"><div class="conf-fill" style="width:${hasNotes?f.confidence:0}%;background:${confColor(f.confidence)}"></div></div>
+        <div class="conf-val">${hasNotes?f.confidence+'%':'—'}</div>
+      </div>
+      ${hasNotes
+        ? `<div class="fcard-notes-summary">${chips}</div>`
+        : `<div class="fcard-empty">No thoughts logged yet — click to add.</div>`
+      }
+    </div>`;
+  }).join('');
+}
+
+// ---- DETAIL PANEL ----
+function openDetail(id){
+  const f = state.fixtures.find(x=>x.id===id);
+  if(!f) return;
+  activeFix = id;
+
+  // Default tab: batters if scout data exists, else overview
+  const hasScout = (f.scout?.batters?.length||0)+(f.scout?.bowlers?.length||0)>0;
+  activeTab = hasScout ? 'batters' : 'overview';
+
+  document.getElementById('detail-meta').innerHTML =
+    `<span class="fcard-venue-tag ${f.venue}">${f.venue==='home'?'Home · Riverside':'Away'}</span>`;
+  document.getElementById('detail-opp').textContent = 'vs ' + f.opp;
+  document.getElementById('detail-sub').textContent = fmtDateLong(f.date) || 'Date TBD';
+
+  renderTabs(f);
+  renderTabBody(f);
+
+  document.getElementById('detail-overlay').classList.add('open');
+  document.getElementById('detail-panel').classList.add('open');
+  renderSidebar();
+}
+
+function renderTabs(f){
+  const batters = f.scout?.batters?.length||0;
+  const bowlers = f.scout?.bowlers?.length||0;
+  const tabs = [
+    {k:'overview', label:'Overview'},
+    {k:'batters',  label:'Batters', count:batters},
+    {k:'bowlers',  label:'Bowlers', count:bowlers},
+  ];
+  document.getElementById('detail-tabs').innerHTML = tabs.map(t=>
+    `<button class="detail-tab ${activeTab===t.k?'active':''}" onclick="switchTab('${t.k}')">${t.label}${t.count!==undefined?`<span class="tab-count">${t.count}</span>`:''}</button>`
+  ).join('');
+}
+
+function switchTab(k){
+  activeTab = k;
+  const f = state.fixtures.find(x=>x.id===activeFix);
+  if(!f) return;
+  renderTabs(f);
+  renderTabBody(f);
+}
+
+function renderTabBody(f){
+  const body = document.getElementById('detail-body');
+  if(activeTab==='overview'){
+    body.innerHTML = renderOverviewTab(f);
+    wireOverviewInputs(f);
+  } else if(activeTab==='batters'){
+    body.innerHTML = renderPlayerList(f, 'batters');
+  } else if(activeTab==='bowlers'){
+    body.innerHTML = renderPlayerList(f, 'bowlers');
+  }
+}
+
+function renderOverviewTab(f){
+  return `
+    <div class="field-group">
+      <div class="field-label"><span class="label-dot"></span>Match details</div>
+      <div class="date-row">
+        <input type="text" class="text-input" id="ed-opp" value="${escapeAttr(f.opp)}" placeholder="Opposition">
+        <input type="date" class="date-input" id="ed-date" value="${f.date||''}">
+      </div>
+      <div class="date-row" style="margin-top:8px;">
+        <select class="text-input" id="ed-venue">
+          <option value="home" ${f.venue==='home'?'selected':''}>Home (Riverside)</option>
+          <option value="away" ${f.venue==='away'?'selected':''}>Away</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="field-label"><span class="label-dot"></span>Confidence rating</div>
+      <div class="conf-row">
+        <input type="range" min="0" max="100" value="${f.confidence}" class="conf-slider" id="ed-conf" oninput="document.getElementById('conf-display').textContent=this.value+'%';">
+        <div class="conf-display" id="conf-display">${f.confidence}%</div>
+      </div>
+    </div>
+
+    ${NOTE_FIELDS.map(nf=>`
+      <div class="field-group">
+        <div class="field-label"><span class="label-dot"></span>${nf.label}</div>
+        <textarea data-key="${nf.key}" placeholder="${nf.placeholder}">${escapeHtml(f.notes?.[nf.key]||'')}</textarea>
+      </div>
+    `).join('')}
+  `;
+}
+
+function wireOverviewInputs(f){
+  const body = document.getElementById('detail-body');
+  body.querySelectorAll('textarea').forEach(ta=>{
+    ta.addEventListener('input',()=>{
+      f.notes = f.notes || {};
+      f.notes[ta.dataset.key] = ta.value;
+      saveState();renderGrid();renderSidebar();
+    });
+  });
+  document.getElementById('ed-opp').addEventListener('input',e=>{f.opp=e.target.value;saveState();renderGrid();renderSidebar();document.getElementById('detail-opp').textContent='vs '+e.target.value;});
+  document.getElementById('ed-date').addEventListener('input',e=>{f.date=e.target.value;saveState();renderGrid();renderSidebar();document.getElementById('detail-sub').textContent=fmtDateLong(e.target.value)||'Date TBD';});
+  document.getElementById('ed-venue').addEventListener('change',e=>{f.venue=e.target.value;saveState();renderGrid();renderSidebar();document.getElementById('detail-meta').innerHTML=`<span class="fcard-venue-tag ${f.venue}">${f.venue==='home'?'Home · Riverside':'Away'}</span>`;});
+  document.getElementById('ed-conf').addEventListener('input',e=>{f.confidence=+e.target.value;saveState();renderGrid();renderSidebar();});
+}
+
+function renderPlayerList(f, type){
+  const players = f.scout?.[type] || [];
+  if(!players.length){
+    return `<div class="scout-empty">
+      <div style="font-size:32px;opacity:.3;margin-bottom:10px;">—</div>
+      No ${type} scouted yet.<br>
+      <span style="font-size:11px;">Upload an analysis PDF to populate this section.</span>
+    </div>`;
+  }
+  const meta = f.scout?.source ? `<div class="scout-meta">${escapeHtml(f.scout.source)}</div>` : '';
+  const heading = type==='batters' ? 'Batting threats' : 'Bowling threats';
+  return meta + `<div class="scout-section-head">${heading}</div>` +
+    players.map(p=>renderPlayerCard(p, type)).join('');
+}
+
+function renderPlayerCard(p, type){
+  const phaseLabels = {pp:'Powerplay', mid:'Middle Overs', death:'Death'};
+  const phases = ['pp','mid','death'].map(k=>{
+    const ph = p.phases?.[k] || {r:'na',t:'No data'};
+    return `<div class="pc-pill" style="--col:${RATING_META[ph.r].color}">
+      <div class="pc-pill-head">${phaseLabels[k]}</div>
+      <div class="pc-pill-text">${escapeHtml(ph.t)}</div>
+    </div>`;
+  }).join('');
+
+  // Matchups differ for batter vs bowler
+  let matchups = '';
+  if(type==='batters'){
+    const seam = p.matchups?.seam || {r:'na',t:'No data'};
+    const spin = p.matchups?.spin || {r:'na',t:'No data'};
+    matchups = `<div class="pc-pill" style="--col:${RATING_META[seam.r].color}">
+      <div class="pc-pill-head">vs Seam</div>
+      <div class="pc-pill-text">${escapeHtml(seam.t)}</div>
+    </div>
+    <div class="pc-pill" style="--col:${RATING_META[spin.r].color}">
+      <div class="pc-pill-head">vs Spin</div>
+      <div class="pc-pill-text">${escapeHtml(spin.t)}</div>
+    </div>`;
+  } else {
+    const lh = p.matchups?.lh || {r:'na',t:'No data'};
+    const rh = p.matchups?.rh || {r:'na',t:'No data'};
+    matchups = `<div class="pc-pill" style="--col:${RATING_META[lh.r].color}">
+      <div class="pc-pill-head">vs Left-hand</div>
+      <div class="pc-pill-text">${escapeHtml(lh.t)}</div>
+    </div>
+    <div class="pc-pill" style="--col:${RATING_META[rh.r].color}">
+      <div class="pc-pill-head">vs Right-hand</div>
+      <div class="pc-pill-text">${escapeHtml(rh.t)}</div>
+    </div>`;
+  }
+
+  const threatLabel = {high:'High Threat', med:'Medium Threat', low:'Low Threat'}[p.threat] || '';
+
+  return `<div class="player-card">
+    <div class="pc-head">
+      <div>
+        <div class="pc-name">${escapeHtml(p.name)}</div>
+        <div class="pc-role">${escapeHtml(p.role||'')}</div>
+      </div>
+      ${p.threat ? `<div class="pc-threat ${p.threat}">${threatLabel}</div>` : ''}
+    </div>
+    <div class="pc-strip-label">Phase profile</div>
+    <div class="pc-strips">${phases}</div>
+    <div class="pc-strip-label">Matchups</div>
+    <div class="pc-matchups">${matchups}</div>
+    <div class="pc-summary">${escapeHtml(p.summary||'')}</div>
+    ${p.target ? `<div class="pc-target"><b>Target / Plan</b>${escapeHtml(p.target)}</div>` : ''}
+  </div>`;
+}
+
+function closeDetail(){
+  document.getElementById('detail-overlay').classList.remove('open');
+  document.getElementById('detail-panel').classList.remove('open');
+  activeFix = null;
+  renderSidebar();
+}
+
+function deleteFixture(){
+  if(!activeFix) return;
+  const f = state.fixtures.find(x=>x.id===activeFix);
+  if(!f) return;
+  if(!confirm(`Delete the ${f.opp} fixture? This cannot be undone.`)) return;
+  state.fixtures = state.fixtures.filter(x=>x.id!==activeFix);
+  saveState();
+  closeDetail();
+  render();
+}
+
+// ---- ADD FIXTURE ----
+function openAddModal(){
+  document.getElementById('add-opp').value='';
+  document.getElementById('add-date').value='';
+  document.getElementById('add-venue').value='home';
+  document.getElementById('add-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('add-opp').focus(),50);
+}
+function closeAddModal(){document.getElementById('add-modal').classList.remove('open');}
+
+function addFixture(){
+  const opp = document.getElementById('add-opp').value.trim();
+  if(!opp){alert('Opposition is required');return;}
+  const f = {
+    id:'fx_'+Date.now(),
+    opp,
+    date:document.getElementById('add-date').value,
+    venue:document.getElementById('add-venue').value,
+    confidence:50,
+    notes:{preview:'',threats:'',selection:'',tactics:'',conditions:''}
+  };
+  state.fixtures.push(f);
+  saveState();
+  closeAddModal();
+  render();
+  openDetail(f.id);
+}
+
+// ---- EXPORT / IMPORT ----
+function exportData(){
+  const blob = new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `durham-fixtures-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function importData(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    try{
+      const data = JSON.parse(ev.target.result);
+      if(!data.fixtures || !Array.isArray(data.fixtures)) throw new Error('Invalid file');
+      if(!confirm(`Import ${data.fixtures.length} fixtures? This will replace your current data.`)) return;
+      state = data;
+      saveState();
+      render();
+    }catch(err){alert('Could not import: '+err.message);}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+function goHome(){
+  activeFilter='all';
+  closeDetail();
+  render();
+}
+
+// ---- UTIL ----
+function escapeHtml(s){return (s||'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function escapeAttr(s){return escapeHtml(s);}
+
+// ---- MAIN RENDER ----
+function render(){
+  renderSidebar();
+  renderGrid();
+  // sub-line count
+  const total = state.fixtures.length;
+  const noted = state.fixtures.filter(f=>notesFilled(f)>0).length;
+  document.getElementById('sub-line').textContent =
+    `${total} fixture${total===1?'':'s'} · ${noted} with notes`;
+}
+
+render();
+</script>
+</body>
+</html>
