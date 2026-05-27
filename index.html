@@ -509,44 +509,33 @@ const YORKSHIRE_2025 = {
     {name:'Moeen Ali', role:'Off-spin â€” allrounder', threat:'high',
       phases:{pp:{r:'pos',t:'Below avg economy Â· avg wicket rate'}, mid:{r:'pos',t:'Below avg economy Â· avg wicket rate'}, death:{r:'pos',t:'Well below avg economy Â· well above avg wicket rate'}},
       matchups:{lh:{r:'pos',t:'Strength â€” above avg wicket rate'}, rh:{r:'neg',t:'Weakness â€” below avg wicket rate'}},
-      summary:'Below-avg economy across all phases. Death is exceptional â€” a rare and highly valuable death option for a spinner. Prefers bowling at left-handers.',
-      target:'Promote right-handers to attack him â€” below-avg wicket rate vs RH.'
+      summary:'Strong across all three phases â€” below-avg economy throughout. Death is exceptional: well below-avg economy with a well above-avg wicket rate. Above-avg wicket rate vs left-handers; below-avg vs right-handers.'
     },
     {name:'Andrew Tye', role:'Seam', threat:'high',
       phases:{pp:{r:'neg',t:'Above avg economy Â· above avg wicket rate'}, mid:{r:'pos',t:'Below avg economy Â· well above avg wicket rate'}, death:{r:'pos',t:'Avg economy Â· above avg wicket rate'}},
-      matchups:{lh:{r:'pos',t:'Strength â€” above avg wicket rate and boundary restriction'}, rh:{r:'neu',t:'Neutral â€” near-avg across both'}},
-      summary:'Middle overs outstanding â€” below-avg economy with a well above-avg wicket rate. Death also a strength. PP the weak phase â€” high economy with a reduced boundary restriction.',
-      target:'Attack early in PP if possible. Prefers bowling at left-handers â€” keep right-handers facing him where possible.'
+      summary:'Middle overs his strongest phase â€” below-avg economy with a well above-avg wicket rate. Death also strong: avg economy, above-avg wicket rate. PP weakest â€” above-avg economy with a reduced boundary restriction.'
     },
     {name:'Hasan Ali', role:'Seam', threat:'high',
       phases:{pp:{r:'pos',t:'Below avg economy Â· above avg wicket rate'}, mid:{r:'neu',t:'Avg economy Â· avg wicket rate'}, death:{r:'pos',t:'Below avg economy Â· above avg wicket rate'}},
-      matchups:{lh:{r:'neg',t:'Weakness â€” well below avg wicket rate, more boundaries'}, rh:{r:'pos',t:'Strength â€” above avg wicket rate, fewer boundaries'}},
-      summary:'Effective across all three phases. PP a genuine strength. Death wicket rate well above avg with controlled economy. Particular strength restricting boundaries in middle.',
-      target:'Promote left-handers to attack him â€” well below-avg wicket rate vs LH with a higher boundary rate.'
+      summary:'Strong in PP and death â€” below-avg economy with an above-avg wicket rate in both. Middle overs average on both dimensions.'
     },
     {name:'Jafer Chohan', role:'Leg-spin', threat:'med',
       phases:{pp:{r:'na',t:'Insufficient data'}, mid:{r:'neu',t:'Avg economy Â· avg wicket rate'}, death:{r:'neg',t:'Above avg economy Â· well above avg wicket rate'}},
       matchups:{lh:{r:'pos',t:'Strength â€” above avg wicket rate, fewer boundaries'}, rh:{r:'neu',t:'Neutral â€” slightly below avg wicket rate'}},
-      summary:'Middle overs his primary phase. Death wicket rate well above avg though economy slightly elevated. Prefers bowling at left-handers.',
-      target:'Promote right-handers to attack him â€” slightly below-avg wicket rate vs RH.'
+      summary:'Middle overs average on both dimensions. Death wicket rate well above avg but economy above avg. Above-avg wicket rate vs left-handers; near-avg vs right-handers.'
     },
     {name:'Matthew Revis', role:'Seam â€” allrounder', threat:'med',
       phases:{pp:{r:'neg',t:'Well above avg economy Â· above avg wicket rate'}, mid:{r:'neg',t:'Above avg economy Â· below avg wicket rate'}, death:{r:'pos',t:'Below avg economy Â· above avg wicket rate'}},
-      matchups:{lh:{r:'neg',t:'Weakness â€” well below avg wicket rate'}, rh:{r:'neu',t:'Neutral â€” marginally above avg wicket rate'}},
-      summary:'Death his best phase. PP expensive but wicket-taking. Middle overs below avg on both dimensions.',
-      target:'Promote left-handers to attack him outside of the death â€” well below-avg wicket rate vs LH.'
+      summary:'Death his strongest phase â€” below-avg economy with an above-avg wicket rate. PP economy well above avg, though wicket rate above avg. Middle overs weak: above-avg economy with a below-avg wicket rate.'
     },
     {name:'George Hill', role:'Seam â€” allrounder', threat:'low',
       phases:{pp:{r:'neg',t:'Above avg economy Â· above avg wicket rate'}, mid:{r:'neg',t:'Above avg economy Â· well below avg wicket rate'}, death:{r:'neg',t:'Well above avg economy Â· below avg wicket rate'}},
-      matchups:{lh:{r:'na',t:'Insufficient data'}, rh:{r:'neu',t:'Neutral â€” average across both'}},
-      summary:'Above-avg economy in all phases. Very low wicket rate in middle. Death expensive with a below-avg wicket rate. PP wicket rate the one positive.',
-      target:'Look to attack â€” high economy across the board with a low wicket rate in middle and death.'
+      summary:'Above-avg economy across all three phases. PP wicket rate above avg; middle overs well below avg; death below avg.'
     },
     {name:'Dom Bess', role:'Off-spin â€” allrounder', threat:'low',
       phases:{pp:{r:'pos',t:'Below avg economy Â· below avg wicket rate'}, mid:{r:'pos',t:'Below avg economy Â· avg wicket rate'}, death:{r:'neg',t:'Above avg economy Â· below avg wicket rate'}},
       matchups:{lh:{r:'pos',t:'Marginal strength â€” slightly above avg wicket rate'}, rh:{r:'neu',t:'Neutral â€” near-avg across both'}},
-      summary:'Middle overs his best phase. PP economy good but wicket rate below avg. Death expensive with a below-avg wicket rate.',
-      target:'Attack in death overs â€” high economy with a low wicket rate.'
+      summary:'Below-avg economy in PP and middle. Wicket rate below avg in PP, avg in middle. Death weak: above-avg economy with a below-avg wicket rate. Slightly above-avg wicket rate vs left-handers; near-avg vs right-handers.'
     },
   ]
 };
@@ -573,7 +562,7 @@ let saveTimer = null;
 
 function loadState(){
   try{
-    const raw = localStorage.getItem('durham-fixtures-t20-v5');
+    const raw = localStorage.getItem('durham-fixtures-t20-v8');
     if(raw){
       const parsed = JSON.parse(raw);
       // ensure all fixtures have notes + scout structure
@@ -595,7 +584,7 @@ function loadState(){
         notes:{
           preview: isFirstYorkshire ? 'Yorkshire bring a top-heavy batting line-up with three above-average top-order options (Bairstow, Lyth, Luxton). Spin is the clear targeting angle â€” Lyth, Wharton and Hill all have significant spin weaknesses. Their bowling threat is concentrated in Moeen, Tye and Hasan Ali, each with distinct hand preferences we can exploit through batting order.' : '',
           selection:'',
-          tactics: isFirstYorkshire ? 'Front-load spin in the powerplay and middle overs where possible â€” avoid spin at the death. Try to keep right-handers facing Moeen and Chohan, left-handers facing Hasan. Tye is dangerous in middle â€” look to be set before he returns. Death bowling weakness is in Hill and Bess â€” earmark those overs.' : '',
+          tactics: isFirstYorkshire ? 'Front-load spin in the powerplay and middle overs where possible â€” avoid spin at the death. Try to keep right-handers facing Moeen and Chohan. Tye is dangerous in middle â€” look to be set before he returns. Hasan is most threatening in PP and death â€” middle overs his weakest phase. Death bowling weakness is in Hill and Bess â€” earmark those overs.' : '',
           conditions:''
         },
         scout: isFirstYorkshire ? YORKSHIRE_2025 : {batters:[], bowlers:[], source:''}
@@ -606,7 +595,7 @@ function loadState(){
 function saveState(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(()=>{
-    localStorage.setItem('durham-fixtures-t20-v5', JSON.stringify(state));
+    localStorage.setItem('durham-fixtures-t20-v8', JSON.stringify(state));
   },200);
 }
 
@@ -851,6 +840,7 @@ function renderPlayerCard(p, type){
 
   // Matchups differ for batter vs bowler
   let matchups = '';
+  let showMatchups = true;
   if(type==='batters'){
     const seam = p.matchups?.seam || {r:'na',t:'No data'};
     const spin = p.matchups?.spin || {r:'na',t:'No data'};
@@ -863,16 +853,21 @@ function renderPlayerCard(p, type){
       <div class="pc-pill-text">${escapeHtml(spin.t)}</div>
     </div>`;
   } else {
-    const lh = p.matchups?.lh || {r:'na',t:'No data'};
-    const rh = p.matchups?.rh || {r:'na',t:'No data'};
-    matchups = `<div class="pc-pill" style="--col:${RATING_META[lh.r].color}">
-      <div class="pc-pill-head">vs Left-hand</div>
-      <div class="pc-pill-text">${escapeHtml(lh.t)}</div>
-    </div>
-    <div class="pc-pill" style="--col:${RATING_META[rh.r].color}">
-      <div class="pc-pill-head">vs Right-hand</div>
-      <div class="pc-pill-text">${escapeHtml(rh.t)}</div>
-    </div>`;
+    // Bowlers â€” skip the matchup section if not provided (e.g. seamers without meaningful L/R split)
+    if(!p.matchups){
+      showMatchups = false;
+    } else {
+      const lh = p.matchups.lh || {r:'na',t:'No data'};
+      const rh = p.matchups.rh || {r:'na',t:'No data'};
+      matchups = `<div class="pc-pill" style="--col:${RATING_META[lh.r].color}">
+        <div class="pc-pill-head">vs Left-hand</div>
+        <div class="pc-pill-text">${escapeHtml(lh.t)}</div>
+      </div>
+      <div class="pc-pill" style="--col:${RATING_META[rh.r].color}">
+        <div class="pc-pill-head">vs Right-hand</div>
+        <div class="pc-pill-text">${escapeHtml(rh.t)}</div>
+      </div>`;
+    }
   }
 
   const threatLabel = {high:'High Threat', med:'Medium Threat', low:'Low Threat'}[p.threat] || '';
@@ -887,8 +882,8 @@ function renderPlayerCard(p, type){
     </div>
     <div class="pc-strip-label">Phase profile</div>
     <div class="pc-strips">${phases}</div>
-    <div class="pc-strip-label">Matchups</div>
-    <div class="pc-matchups">${matchups}</div>
+    ${showMatchups ? `<div class="pc-strip-label">Matchups</div>
+    <div class="pc-matchups">${matchups}</div>` : ''}
     <div class="pc-summary">${escapeHtml(p.summary||'')}</div>
     ${p.target ? `<div class="pc-target"><b>Target / Plan</b>${escapeHtml(p.target)}</div>` : ''}
   </div>`;
